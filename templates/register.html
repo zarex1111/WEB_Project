@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+        <p class="fs-2">Регистрация</h2>
+        <form class="register_form" method="post">
+            <div class="input-group">
+                <span class="input-group-text">Имя и фамилия</span>
+                <input type="text" class="form-control" placeholder="Имя">
+                <input type="text" class="form-control" placeholder="Фамилия">
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">e-mail</span>
+                <input type="email" class="form-control" placeholder="Почта">
+            </div>
+            <div class="input-group">
+                <span class="input-group-text">Пароль</span>
+                <input type="password" class="form-control" placeholder="Почта">
+            </div>
+            <div class="input-group">
+                <label for="profilePicture" class="input-group-text">Выберите фото профиля</label>
+                <input class="form-control" type="file">
+            </div>
+            <div class="h-captcha" data-sitekey="a1cdfa37-7144-4fb5-a752-7aa6207b0887"></div>
+            <button type="submit" class="btn btn-primary btn-lg">Зарегистрироваться</button>
+        </form>
+{% endblock %}

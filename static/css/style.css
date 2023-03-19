@@ -1,0 +1,136 @@
+body 
+{
+    font-family: 'Raleway', sans-serif;
+    font-size: x-large;
+    color: aliceblue;
+    background-image: linear-gradient(#7908AA, #FF7D73);
+    text-align: center;
+}
+
+.fs-2
+{
+    color: aliceblue;
+}
+
+#title
+{
+    background-color: #7908AA;
+}
+
+footer
+{
+    margin-top: 10%;
+    margin-bottom: 2%;
+    text-align: center;
+}
+
+
+.register_form
+{
+    margin-right: 10%;
+    margin-left: 10%;
+    width: 100%;
+    font-family: 'Raleway', sans-serif;
+    color: aliceblue;
+}
+
+.h-captcha
+{
+    color: aliceblue;
+    font-family: 'Raleway', sans-serif;
+    border-color: #FF7D73;
+    margin-bottom: 3%;
+}
+
+.nav_bar
+{
+    margin-bottom: 10%;
+    height: 7%;
+    text-align: center;
+}
+
+.btn-primary
+{
+    background-color: 	#E83A93;
+    border-color: #D2006B;
+}
+
+.btn-primary:hover
+{
+    background-color: #9D2763;
+    border-color: #880045;
+}
+
+.input-group-text
+{
+    background-color: #B365D4;
+    color: aliceblue;
+    font-family: 'Raleway', sans-serif;
+    border-color: #A63CD4;
+    margin-bottom: 3%;
+    border-radius: 0%;
+}
+
+.input-group-text:hover
+{
+    background-color: #A63CD4;
+    border-color: #7908AA;
+}
+
+.main_obj
+{
+    margin: 3%;
+}
+
+b
+{
+    text-shadow: gray;
+}
+
+p::selection
+{
+    background: lightsteelblue;
+}
+
+.cat_block
+{
+    margin-bottom: 5%;
+    height: auto;
+    width: auto;
+    align-items: center;
+    margin-left: auto;
+    margin-top: 9%;
+}
+
+div
+{
+    display: flex;
+}
+
+img
+{
+    border-radius: 12%;
+}
+
+.cat_info
+{
+    display: inline-block;
+    margin: 2%;
+}
+
+.joke_place
+{
+    height: auto;
+    width: auto;
+}
+
+html
+{
+    margin: 3%;
+    background-color: #7908AA;
+}
+
+.github_link
+{
+    background-image: url("https://sun9-56.userapi.com/s/v1/ig2/lZIr5hM6sWKBombpDo5AkPRuse7ibqh5X3PPqkca6fSs76ylsggqtqz-bjA7_1fr68LXwFqT0Ap3ExW8xcLF7OEJ.jpg?size=100x100&quality=95&crop=628,68,1244,1244&ava=1");
+}
