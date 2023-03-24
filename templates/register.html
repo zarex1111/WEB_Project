@@ -3,25 +3,75 @@
 {% block content %}
         <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
         <p class="fs-2">Регистрация</h2>
-        <form class="register_form" method="post">
+        <form class="register_form" method="post" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
             <div class="input-group">
-                <span class="input-group-text">Имя и фамилия</span>
-                <input type="text" class="form-control" placeholder="Имя">
-                <input type="text" class="form-control" placeholder="Фамилия">
-            </div>
+                <p class="input-group-text">{{ form.name.label }}</p>
+                {{ form.name(class="form-control", type="text") }}
+                {{ form.surname(class="form-control", type="text") }}
+                {% for error in form.name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+                {% for error in form.surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div><br>
             <div class="input-group">
-                <span class="input-group-text">e-mail</span>
-                <input type="email" class="form-control" placeholder="Почта">
-            </div>
+                <p class="input-group-text">{{ form.role.label }}</p>
+                {{ form.role() }}
+                {% for error in form.role.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div><br>
             <div class="input-group">
-                <span class="input-group-text">Пароль</span>
-                <input type="password" class="form-control" placeholder="Почта">
-            </div>
+                <p class="input-group-text">{{ form.email.label }}</p>
+                {{ form.email(class="form-control", type="email") }}
+                {% for error in form.email.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div><br>
             <div class="input-group">
-                <label for="profilePicture" class="input-group-text">Выберите фото профиля</label>
-                <input class="form-control" type="file">
-            </div>
-            <div class="h-captcha" data-sitekey="a1cdfa37-7144-4fb5-a752-7aa6207b0887"></div>
-            <button type="submit" class="btn btn-primary btn-lg">Зарегистрироваться</button>
+                <p class="input-group-text">{{ form.login.label }}</p>
+                {{ form.login(class="form-control", type="text") }}
+                {% for error in form.login.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div><br>
+            <div class="input-group">
+                <p class="input-group-text">{{ form.password.label }}</p>
+                {{ form.password(class="form-control", type="password") }}
+                {% for error in form.password.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div><br>
+            <div class="input-group">
+                <p class="input-group-text">{{ form.image.label }}</p>
+                {{ form.image(class="form-control", type="file") }}
+                {% for error in form.image.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </div><br>
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}
+                {% for error in form.submit.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p class="message" role="alert">{{ message }}</p>
         </form>
 {% endblock %}
