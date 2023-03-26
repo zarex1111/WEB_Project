@@ -104,7 +104,7 @@ p::selection
 
 div
 {
-    display: flex;
+    display: inline-block;
 }
 
 img
@@ -133,4 +133,9 @@ html
 .github_link
 {
     background-image: url("https://sun9-56.userapi.com/s/v1/ig2/lZIr5hM6sWKBombpDo5AkPRuse7ibqh5X3PPqkca6fSs76ylsggqtqz-bjA7_1fr68LXwFqT0Ap3ExW8xcLF7OEJ.jpg?size=100x100&quality=95&crop=628,68,1244,1244&ava=1");
+}
+
+.profile-block
+{
+    vertical-align: middle;
 }

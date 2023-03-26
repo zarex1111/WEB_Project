@@ -9,10 +9,22 @@ from string import ascii_lowercase
 from PIL import Image
 import os
 import email_api
+from useful_tools import smart_split
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['UPLOAD_EXTENSIONS'] = ['jpg', 'png']
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    sess = create_session()
+    return sess.query(User).get(user_id)
 
 
 def main():
@@ -64,7 +76,7 @@ def register_page():
         user.set_password(form.password.data)
         sess.add(user)
         sess.commit()
-        return redirect(f'/api/send_to_{user.email}/0')
+        return redirect(f'/profile/{sess.query(User).filter(User.login == user.login).first().id}')
     return render_template('register.html', title="Регистрация", form=form, **base_config())
 
 
@@ -72,6 +84,59 @@ def register_page():
 @app.route("/")
 def welcome_page():
     return render_template("main.html", title="DOODLE - проверь свой код!", **base_config())
+
+
+@app.route('/profile')
+def profile_page():
+    if current_user.is_authenticated:
+        data = current_user
+        if data:
+            user_info = {
+                'name': data.name,
+                'surname': data.surname,
+                'image': data.image,
+                'courses': smart_split(data.courses, ' '),
+                'tasks': smart_split(data.tasks, ' '),
+                'role': ('Учитель', 'Ученик')[data.role - 1],
+                'email': data.email,
+                'login': data.login
+            }
+            return render_template('profile.html', user_info=user_info, **base_config())
+    
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        sess = create_session()
+        user = sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect('/')
+        return render_template('login.html', message='Неправильный адрес электронной почты или пароль', form=form, title='Авторизация', **base_config())
+    return render_template('login.html', form=form, title='Авторизация', **base_config())
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
+
+
+@app.errorhandler(404)
+def err404(e):
+    return "For some reason, that page doesn't exist"
+
+
+@app.errorhandler(400)
+def err400(e):
+    return "Server cannot reach some data"
+
+
+@app.errorhandler(500)
+def err500(e):
+    return "My code doesn't work as well, my bad"
 
 
 if __name__ == '__main__':

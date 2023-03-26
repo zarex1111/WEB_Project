@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="profile-block">
+            <p>{{ user_info['role'] }}</p>
+            <div class="name-photo-block">
+                <img src="{{ user_info['image'] }}" alt="Missing profile picture" id="profile_picture">
+                <ul class="list-group">
+                    <li>{{ user_info['name']}} {{ user_info['surname']}} </li>
+                    <li>{{ user_info['login'] }}</li>
+                    <li>{{ user_info['email'] }}</li>
+                </ul>
+            </div>
+            <p>Мои курсы</p>
+            <ul class="list-group">
+                {% for course in user_info['courses'] %}
+                    <li><a href=""><p>{{ course }}</p></a></li>
+                {% endfor %}
+            </ul>
+            <p>Мои задачи</p>
+            <ul class="list-group">
+                {% for course in user_info['tasks'] %}
+                    <li><a href=""><p>{{ course }}</p></a></li>
+                {% endfor %}
+            </ul>
+        </div>
+{% endblock %}
