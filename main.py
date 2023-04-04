@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, abort
 from base_config import base_config
 import requests
 from data.db_session import global_init, create_session
 from data.__all_models import *
 from forms.user import *
+from forms.task import *
 from random import choices
 from string import ascii_lowercase
 from PIL import Image
@@ -76,7 +77,7 @@ def register_page():
         user.set_password(form.password.data)
         sess.add(user)
         sess.commit()
-        return redirect(f'/profile/{sess.query(User).filter(User.login == user.login).first().id}')
+        return redirect(f'/login')
     return render_template('register.html', title="Регистрация", form=form, **base_config())
 
 
@@ -90,19 +91,57 @@ def welcome_page():
 def profile_page():
     if current_user.is_authenticated:
         data = current_user
+        sess = create_session()
         if data:
             user_info = {
                 'name': data.name,
                 'surname': data.surname,
                 'image': data.image,
-                'courses': smart_split(data.courses, ' '),
-                'tasks': smart_split(data.tasks, ' '),
+                'courses': sess.query(Course).filter(Course.author_id == current_user.id),
+                'tasks': [],
                 'role': ('Учитель', 'Ученик')[data.role - 1],
                 'email': data.email,
                 'login': data.login
             }
             return render_template('profile.html', user_info=user_info, **base_config())
-    
+        
+
+@app.route('/delete/<string:type>/<int:id>')
+@login_required
+def delete_smth(type, id):
+    sess = create_session()
+    if type == 'course':
+        course = sess.query(Course).filter(Course.author_id == current_user.id, Course.id == id).first()
+        if course:
+            sess.delete(course)
+            sess.commit()
+            return redirect('/profile')
+        else:
+            abort(404)
+    else:
+        abort(404)
+
+
+@app.route('/edit/course/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_course(id):
+    sess = create_session()
+    course = sess.query(Course).filter(Course.author_id == current_user.id, Course.id == id).first()
+    if course:
+        form = AddCourse()
+        if request.method == 'GET':
+            form.title.data = course.title
+            form.description.data = course.description
+            form.is_login_required.data = course.is_login_required
+        if form.validate_on_submit():
+            course.title = form.title.data
+            course.description = form.description.data
+            course.is_login_required = form.is_login_required.data
+            sess.commit()
+            return redirect('/profile')
+        return render_template('add_course.html', **base_config(), title='Редактировать курс', form=form)
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -122,6 +161,31 @@ def login():
 def logout():
     logout_user()
     return redirect('/')
+
+
+@app.route('/course/<int:id>')
+def course_page(id):
+    sess = create_session()
+    course = sess.query(Course).filter(Course.id == id).first()
+    if course:
+        return render_template('course.html', **base_config(), title=course.title, course=course, tasks=sess.query(Task).filter(Task.course_id == id).all())
+
+
+@app.route('/add_course', methods=['GET', 'POST'])
+@login_required
+def add_course_page():
+    form = AddCourse()
+    if form.validate_on_submit():
+        sess = create_session()
+        course = Course()
+        course.title = form.title.data
+        course.description = form.description.data
+        course.is_login_required = form.is_login_required.data
+        course.author_id = current_user.id
+        sess.add(course)
+        sess.commit()
+        return redirect('/profile')
+    return render_template('add_course.html', title='Добавить курс', **base_config(), form=form)
 
 
 @app.errorhandler(404)

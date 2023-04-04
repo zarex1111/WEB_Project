@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="input-group">
+                <p class="info-group-text">{{ form.title.label }}</p>
+                {{ form.title(class="form-control", type="text") }}
+                {% for error in form.title.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="input-group">
+                <p class="info-group-text">{{ form.description.label }}</p>
+                {{ form.description(class="form-control", type="text") }}
+                {% for error in form.description.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="input-group">
+                <p>{{ form.is_login_required() }}{{ form.is_login_required.label }}</p>
+            </div>
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            <div>{{ message }}</div>
+        </form>
+{% endblock %}

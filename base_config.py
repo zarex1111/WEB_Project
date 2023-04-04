@@ -3,8 +3,11 @@ import googletrans
 
 
 def load_random_cat():
-    json_response = requests.get("https://aws.random.cat/meow").json()
-    cat_url = json_response["file"]
+    # json_response = requests.get("https://aws.random.cat/meow").json()
+    # cat_url = json_response["file"]
+
+    cat_url = 'profile_pictures/basic.jpg'
+
     return cat_url
 
 

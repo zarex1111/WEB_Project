@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+        <p>{{ course.title }}</p><br>
+        <p>{{ course.description }}</p><br>
+        <ul>
+        {% for task in tasks %}
+            <li><a href="/task/{{ task.id }}"><p class="input-group-text">{{ task.title }}</p></a></li>
+        {% endfor %}
+        </ul><br>
+        <a class="btn btn-primary" href="/edit/course/{{ course.id }}">Изменить</a>
+        <a class="btn btn-primary" href="/delete/course/{{ course.id }}">Удалить</a>
+{% endblock %}

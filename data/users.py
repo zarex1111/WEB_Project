@@ -17,7 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     role = sa.Column(sa.Integer, index=True)
     image = sa.Column(sa.String)
     courses = sa.Column(sa.String)
-    tasks = sa.Column(sa.String)
+
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
