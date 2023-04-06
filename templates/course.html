@@ -7,6 +7,7 @@
             <li><a href="/task/{{ task.id }}"><p class="input-group-text">{{ task.title }}</p></a></li>
         {% endfor %}
         </ul><br>
+        <a class="btn btn-primary" href="/add_task/{{ course.id }}">Добавить задачу</a><br>
         <a class="btn btn-primary" href="/edit/course/{{ course.id }}">Изменить</a>
-        <a class="btn btn-primary" href="/delete/course/{{ course.id }}">Удалить</a>
+        <a class="btn btn-primary" href="/delete/course/{{ course.id }}">Удалить</a><br>
 {% endblock %}

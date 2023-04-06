@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <p>{{ task.title }}</p><br>
+        <p>{{ task.condition }}</p>
+        {% if current_user.id == task.author_id %}
+            {% for test in tests %}
+                <a href="/test/{{ test.id }}"><p>{{ test.idata }}|{{ test.odata }}</p></a>
+            {% endfor %}
+        {% endif %}
+        <a href="/add_test/{{ task.id }}"><button class="btn btn-primary">Добавить тест</button></a><br>
+        <a class="btn btn-primary" href="/edit/task/{{ task.id }}">Изменить</a>
+        <a class="btn btn-primary" href="/delete/task/{{ task.id }}">Удалить</a><br>
+        <p>{{ message }}</p>
+{% endblock %}

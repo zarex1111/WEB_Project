@@ -8,3 +8,9 @@ class AddCourse(FlaskForm):
     description = TextAreaField('Описание')
     is_login_required = BooleanField('Предоставить доступ неавторизованным пользователям?')
     submit = SubmitField('Создать')
+
+
+class AddTask(FlaskForm):
+    title = StringField('Название *', validators=[DataRequired()])
+    condition = TextAreaField('Условие')
+    submit = SubmitField('Создать')

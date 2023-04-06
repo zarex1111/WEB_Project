@@ -118,6 +118,14 @@ def delete_smth(type, id):
             return redirect('/profile')
         else:
             abort(404)
+    elif type == 'task':
+        task = sess.query(Task).filter(Task.id == id, Task.author_id == current_user.id).first()
+        if task:
+            sess.delete(task)
+            sess.commit()
+            return redirect('/profile')
+        else:
+            abort(404)
     else:
         abort(404)
 
@@ -140,6 +148,24 @@ def edit_course(id):
             sess.commit()
             return redirect('/profile')
         return render_template('add_course.html', **base_config(), title='Редактировать курс', form=form)
+    
+
+@app.route('/edit/task/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_task(id):
+    sess = create_session()
+    task = sess.query(Task).filter(Task.author_id == current_user.id).first()
+    if task:
+        form = AddTask()
+        if request.method == 'GET':
+            form.title.data = task.title
+            form.condition.data = task.condition
+        if form.validate_on_submit():
+            task.title = form.title.data
+            task.condition = form.condition.data
+            sess.commit()
+            return redirect('/course/' + str(task.course_id))
+        return render_template('add_task.html', **base_config(), title='Редактировать задачу', form=form)
 
 
 
@@ -169,6 +195,16 @@ def course_page(id):
     course = sess.query(Course).filter(Course.id == id).first()
     if course:
         return render_template('course.html', **base_config(), title=course.title, course=course, tasks=sess.query(Task).filter(Task.course_id == id).all())
+    
+@app.route('/task/<int:id>')
+def task_page(id):
+    sess = create_session()
+    task = sess.query(Task).filter(Task.id == id).first()
+    if task:
+        course = sess.query(Course).filter(Course.id == task.course_id).first()
+        if course.is_login_required and not current_user.is_authenticated:
+            abort(404)
+        return render_template('task.html', **base_config(), title=task.title, task=task, tests=sess.query(Test).filter(Test.task_id == task.id).all())
 
 
 @app.route('/add_course', methods=['GET', 'POST'])
@@ -186,6 +222,25 @@ def add_course_page():
         sess.commit()
         return redirect('/profile')
     return render_template('add_course.html', title='Добавить курс', **base_config(), form=form)
+
+
+@app.route('/add_task/<int:course_id>', methods=['GET', 'POST'])
+@login_required
+def add_task_page(course_id):
+    form = AddTask()
+    if not create_session().query(Course).filter(Course.id == course_id).first():
+        return
+    if form.validate_on_submit():
+        sess = create_session()
+        task = Task()
+        task.title = form.title.data
+        task.condition = form.condition.data
+        task.course_id = course_id
+        task.author_id = current_user.id
+        sess.add(task)
+        sess.commit()
+        return redirect('/course/' + str(course_id))
+    return render_template('add_task.html', title='Добавить задачу', **base_config(), form=form)
 
 
 @app.errorhandler(404)
