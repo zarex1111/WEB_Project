@@ -25,6 +25,7 @@
     </div>
     <div class="nav_bar">
         <a href="/main" class="btn btn-primary">Главная</a>
+        <a href="/courses" class="btn btn-primary">Курсы</a>
         {% if current_user.is_authenticated %}
             <a class="btn btn-primary" href="/profile">{{ current_user.login }}</a>
             <a class="btn btn-primary" href="/logout">Выйти из аккаунта</a>

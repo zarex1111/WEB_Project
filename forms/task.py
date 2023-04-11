@@ -14,3 +14,14 @@ class AddTask(FlaskForm):
     title = StringField('Название *', validators=[DataRequired()])
     condition = TextAreaField('Условие')
     submit = SubmitField('Создать')
+
+
+class AddTest(FlaskForm):
+    idata = TextAreaField('input')
+    odata = TextAreaField('output')
+    submit = SubmitField('Добавить')
+
+
+class AddSolution(FlaskForm):
+    code = TextAreaField('Код решения', validators=[DataRequired()])
+    submit = SubmitField('Отправить')

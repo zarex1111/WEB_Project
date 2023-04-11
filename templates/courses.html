@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+        <table class="table table-dark">
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Название</th>
+                <th scope="col">Только для авторизованных пользователей</th>
+            </tr>
+            {% for course in courses %}
+            <a href="/course/{{ course.id }}">
+                <tr>
+                    <th scope="col">{{ course.id }}</th>
+                    <td>{{ course.title }}</td>
+                    <td>{{ course.is_login_required }}</td>
+                </tr>
+            </a>
+            {% endfor %}
+        </table>
+{% endblock %}

@@ -1,9 +1,10 @@
 import sqlalchemy as sa
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Course(SqlAlchemyBase):
+class Course(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'courses'
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)

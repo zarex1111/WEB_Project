@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="input-group">
+                <p class="info-group-text">{{ form.idata.label }}</p>
+                {{ form.idata(class="form-control", type="text") }}
+                {% for error in form.idata.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="input-group">
+                <p class="info-group-text">{{ form.odata.label }}</p>
+                {{ form.odata(class="form-control", type="text") }}
+                {% for error in form.odata.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            <div>{{ message }}</div>
+        </form>
+{% endblock %}

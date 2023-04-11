@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+        <code>{{ solution.code }}</code>
+        <p>Точность - {{ solution.accuracy }}</p>
+        <a href="/task/{{ solution.task_id }}" class="btn btn-primary">Вернуться к задаче</a>
+{% endblock %}

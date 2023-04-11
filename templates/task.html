@@ -3,13 +3,56 @@
 {% block content %}
         <p>{{ task.title }}</p><br>
         <p>{{ task.condition }}</p>
+        <table class="table" title="Тесты/Решения">
         {% if current_user.id == task.author_id %}
+            <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Входные данные</th>
+                    <th scope="col">Выходные данные</th>
+                    <th scope="col">Кнопки</th>
+                </tr>
+            </thead>
+            <tbody>
             {% for test in tests %}
-                <a href="/test/{{ test.id }}"><p>{{ test.idata }}|{{ test.odata }}</p></a>
+            <tr>
+                <th scope="row">{{ test.id }}</th>
+                <td>{{ test.idata }}</td>
+                <td>{{ test.odata }}</td>
+                <td>
+                    <a href="/edit/test/{{ test.id }}" class="btn btn-primary">Редактировать</a>
+                    <a href="/delete/test/{{ test.id }}" class="btn btn-primary">Удалить</a>
+                </td>
+            </tr>
             {% endfor %}
+            </tbody>
+        {% else %}
+            <thead>
+                <tr>
+                    <th scope="col">id</th>
+                    <th scope="col">Процент пройденных тестов</th>
+                    <th scope="col">Решение</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for solution in solutions %}
+            <tr>
+                <th scope="row">{{ solution.id }}</th>
+                <td>
+                    <a href="/solution/{{ solution.id }}" class="btn btn-primary">Перейти к решению</a>
+                    <a href="delete/solution/{{ solution.id }}" class="btn btn-primary">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
         {% endif %}
-        <a href="/add_test/{{ task.id }}"><button class="btn btn-primary">Добавить тест</button></a><br>
-        <a class="btn btn-primary" href="/edit/task/{{ task.id }}">Изменить</a>
-        <a class="btn btn-primary" href="/delete/task/{{ task.id }}">Удалить</a><br>
+        </table>
+        {% if current_user.id != task.author_id %}
+            <a href="/add_solution/{{ task.id }}"><button class="btn btn-primary">Добавить решение</button></a>
+        {% else %}
+            <a href="/add_test/{{ task.id }}"><button class="btn btn-primary">Добавить тест</button></a><br>
+            <a class="btn btn-primary" href="/edit/task/{{ task.id }}">Изменить</a>
+            <a class="btn btn-primary" href="/delete/task/{{ task.id }}">Удалить</a><br>
+        {% endif %}
         <p>{{ message }}</p>
 {% endblock %}

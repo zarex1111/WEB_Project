@@ -22,6 +22,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+def is_a_teacher():
+    return current_user.role == 1 and current_user.is_authenticated
+
+
 @login_manager.user_loader
 def load_user(user_id):
     sess = create_session()
@@ -109,6 +113,8 @@ def profile_page():
 @app.route('/delete/<string:type>/<int:id>')
 @login_required
 def delete_smth(type, id):
+    if not is_a_teacher():
+        return redirect('/access_denied')
     sess = create_session()
     if type == 'course':
         course = sess.query(Course).filter(Course.author_id == current_user.id, Course.id == id).first()
@@ -126,6 +132,18 @@ def delete_smth(type, id):
             return redirect('/profile')
         else:
             abort(404)
+    elif type == 'test':
+        test = sess.query(Test).filter(Test.id == id).first()
+        if test:
+            task = sess.query(Task).filter(Task.id == test.task_id, Task.author_id == current_user.id).first()
+            if task:
+                sess.delete(test)
+                sess.commit()
+                return redirect('/task/' + str(task.id))
+            else:
+                abort(404)
+        else:
+            abort(404)
     else:
         abort(404)
 
@@ -134,6 +152,8 @@ def delete_smth(type, id):
 @login_required
 def edit_course(id):
     sess = create_session()
+    if not is_a_teacher():
+        return redirect('/access_denied')
     course = sess.query(Course).filter(Course.author_id == current_user.id, Course.id == id).first()
     if course:
         form = AddCourse()
@@ -153,8 +173,10 @@ def edit_course(id):
 @app.route('/edit/task/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(id):
+    if not is_a_teacher():
+        return redirect('/access_denied')
     sess = create_session()
-    task = sess.query(Task).filter(Task.author_id == current_user.id).first()
+    task = sess.query(Task).filter(Task.author_id == current_user.id, Task.id == id).first()
     if task:
         form = AddTask()
         if request.method == 'GET':
@@ -166,6 +188,29 @@ def edit_task(id):
             sess.commit()
             return redirect('/course/' + str(task.course_id))
         return render_template('add_task.html', **base_config(), title='Редактировать задачу', form=form)
+    
+
+@app.route('/edit/test/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_test(id):
+    if not is_a_teacher():
+        return redirect('/access_denied')
+    sess = create_session()
+    test = sess.query(Test).filter(Test.id == id).first()
+    if test:
+        task = sess.query(Task).filter(Task.id == test.task_id).first()
+        if task.author_id != current_user.id:
+            return redirect('/access_denied')
+        form = AddTest()
+        if request.method == 'GET':
+            form.idata.data = test.idata
+            form.odata.data = test.odata
+        if form.validate_on_submit():
+            test.idata = form.idata.data
+            task.odata = form.odata.data
+            sess.commit()
+            return redirect('/task/' + str(task.id))
+        return render_template('add_test.html', **base_config(), title='Редактировать тест', form=form)
 
 
 
@@ -196,6 +241,7 @@ def course_page(id):
     if course:
         return render_template('course.html', **base_config(), title=course.title, course=course, tasks=sess.query(Task).filter(Task.course_id == id).all())
     
+
 @app.route('/task/<int:id>')
 def task_page(id):
     sess = create_session()
@@ -203,14 +249,40 @@ def task_page(id):
     if task:
         course = sess.query(Course).filter(Course.id == task.course_id).first()
         if course.is_login_required and not current_user.is_authenticated:
-            abort(404)
-        return render_template('task.html', **base_config(), title=task.title, task=task, tests=sess.query(Test).filter(Test.task_id == task.id).all())
+            return redirect('/access_denied')
+        tests = []
+        solutions = sess.query(Solution).filter(Solution.task_id == task.id).all()
+        if current_user.id == task.author_id:
+            tests = sess.query(Test).filter(Test.task_id == task.id).all()
+        return render_template('task.html', **base_config(), title=task.title, task=task, tests=tests, solutions=solutions)
+    
+
+@app.route('/solution/<int:id>')
+@login_required
+def solution_page(id):
+    sess = create_session()
+    solution = sess.query(Solution).filter(Solution.id == id, Solution.user_id == current_user.id).first()
+    if solution:
+        return render_template('solution.html', solution=solution)
+
+
+@app.route('/courses')
+@login_required
+def courses_page():
+    return render_template('courses.html', courses=create_session().query(Course).all(), **base_config(), title='Курсы')
+    
+
+@app.route('/access_denied')
+def acc():
+    return render_template('access_error.html')
 
 
 @app.route('/add_course', methods=['GET', 'POST'])
 @login_required
 def add_course_page():
     form = AddCourse()
+    if not is_a_teacher():
+        return redirect('/access_denied')
     if form.validate_on_submit():
         sess = create_session()
         course = Course()
@@ -227,9 +299,14 @@ def add_course_page():
 @app.route('/add_task/<int:course_id>', methods=['GET', 'POST'])
 @login_required
 def add_task_page(course_id):
+    if not is_a_teacher():
+        return redirect('/access_denied')
     form = AddTask()
-    if not create_session().query(Course).filter(Course.id == course_id).first():
-        return
+    course = create_session().query(Course).filter(Course.id == course_id, Course.author_id == current_user.id).first()
+    if course is None:
+        abort(404)
+    if not is_a_teacher() or course.author_id != current_user.id:
+        return redirect('/access_denied')
     if form.validate_on_submit():
         sess = create_session()
         task = Task()
@@ -241,6 +318,49 @@ def add_task_page(course_id):
         sess.commit()
         return redirect('/course/' + str(course_id))
     return render_template('add_task.html', title='Добавить задачу', **base_config(), form=form)
+
+
+@app.route('/add_test/<int:task_id>', methods=['GET', 'POST'])
+@login_required
+def add_test_page(task_id):
+    if not is_a_teacher():
+        return redirect('/access_denied')
+    form = AddTest()
+    task = create_session().query(Task).filter(Task.id == task_id).first()
+    if task is None:
+        abort(404)
+    if not is_a_teacher() or task.author_id != current_user.id:
+        return redirect('/access_denied')
+    if form.validate_on_submit():
+        sess = create_session()
+        test = Test()
+        test.idata = form.idata.data
+        test.odata = form.odata.data
+        test.task_id = task_id
+        sess.add(test)
+        sess.commit()
+        return redirect('/task/' + str(task_id))
+    return render_template('add_test.html', title='Добавить тест', **base_config(), form=form)
+
+
+@app.route('/add_solution/<int:task_id>', methods=['GET', 'POST'])
+@login_required
+def add_solution_page(task_id):
+    form = AddSolution()
+    task = create_session().query(Task).filter(Task.id == task_id).first()
+    if task is None:
+        abort(404)
+    if form.validate_on_submit():
+        sess = create_session()
+        solution = Solution()
+        solution.task_id = task_id
+        solution.user_id = current_user.id
+        solution.code = form.code.data
+        solution.accuracy = 100
+        sess.add(solution)
+        sess.commit()
+        return redirect('/task/' + str(task_id))
+    return render_template('add_solution.html', title='Добавить решение', **base_config(), form=form)
 
 
 @app.errorhandler(404)

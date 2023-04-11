@@ -4,10 +4,10 @@ from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
 
 
-class Test(SqlAlchemyBase, SerializerMixin):
-    __tablename__ = 'tests'
+class Solution(SqlAlchemyBase, SerializerMixin):
+    __tablename__ = 'solutions'
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'))
     task_id = sa.Column(sa.Integer, sa.ForeignKey('tasks.id'))
-    idata = sa.Column(sa.String)
-    odata = sa.Column(sa.String)
-    task = orm.relationship('Task')
+    code = sa.Column(sa.String)
+    accuracy = sa.Column(sa.Integer)
