@@ -56,4 +56,19 @@
             <a class="btn btn-primary" href="/delete/task/{{ task.id }}">Удалить</a><br>
         {% endif %}
         <p>{{ message }}</p>
+        <div class="com-block">
+            {% for com in comments %}
+                <div class="comment">
+                    <a href="/profile/{{ com.author_id }}" class="btn btn-primary">{{ com.pseudonim }}</a><br>
+                    <p>{{ com.text }}</p><br>
+                </div>
+            {% endfor %}
+        </div>
+        {% if current_user.is_authenticated %}
+            <form action="" method="post">
+                <input class="form-control" type="text" placeholder="Псевдоним" name="pseudo">
+                <input class="form-control" type="text" placeholder="Текст" name="text">
+                <button class="btn btn-primary" type="submit">Написать</button>
+            </form>
+        {% endif %}
 {% endblock %}

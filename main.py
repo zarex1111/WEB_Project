@@ -106,7 +106,7 @@ def profile_page():
                 'surname': data.surname,
                 'image': data.image,
                 'courses': sess.query(Course).filter(Course.author_id == current_user.id),
-                'tasks': [],
+                'tasks': sess.query(Task).filter(Task.author_id == current_user.id),
                 'role': ('Учитель', 'Ученик')[data.role - 1],
                 'email': data.email,
                 'login': data.login
@@ -146,6 +146,14 @@ def delete_smth(type, id):
                 return redirect('/task/' + str(task.id))
             else:
                 abort(404)
+        else:
+            abort(404)
+    elif type == 'solution':
+        solution = sess.query(Solution).filter(Solution.id == id, Solution.author_id == current_user.id).first()
+        if solution:
+            sess.delete(solution)
+            sess.commit()
+            return redirect('/task/' + str(solution.task_id))
         else:
             abort(404)
     else:
@@ -246,7 +254,7 @@ def course_page(id):
         return render_template('course.html', **base_config(), title=course.title, course=course, tasks=sess.query(Task).filter(Task.course_id == id).all())
     
 
-@app.route('/task/<int:id>')
+@app.route('/task/<int:id>', methods=['GET', 'POST'])
 def task_page(id):
     sess = create_session()
     task = sess.query(Task).filter(Task.id == id).first()
@@ -258,7 +266,17 @@ def task_page(id):
         solutions = sess.query(Solution).filter(Solution.task_id == task.id).all()
         if current_user.id == task.author_id:
             tests = sess.query(Test).filter(Test.task_id == task.id).all()
-        return render_template('task.html', **base_config(), title=task.title, task=task, tests=tests, solutions=solutions)
+        if request.method == 'POST':
+            pseudo = request.form.get('pseudo')
+            text = request.form.get('text')
+            new_comm = Comment()
+            new_comm.author_id = current_user.id
+            new_comm.task_id = id
+            new_comm.pseudonim = pseudo
+            new_comm.text = text
+            sess.add(new_comm)
+            sess.commit()
+        return render_template('task.html', **base_config(), title=task.title, task=task, tests=tests, solutions=solutions, comments=sess.query(Comment).filter(Comment.task_id == id).all())
     
 
 @app.route('/solution/<int:id>')
@@ -372,6 +390,24 @@ def add_solution_page(task_id):
         sess.commit()
         return redirect('/task/' + str(task_id))
     return render_template('add_solution.html', title='Добавить решение', **base_config(), form=form)
+
+
+@app.route('/profile/<int:id>')
+def load_random_profile(id):
+    data = create_session().query(User).get(id)
+    sess = create_session()
+    if data:
+        user_info = {
+            'name': data.name,
+            'surname': data.surname,
+            'image': data.image,
+            'courses': sess.query(Course).filter(Course.author_id == id),
+            'tasks': sess.query(Task).filter(Task.author_id == id),
+            'role': ('Учитель', 'Ученик')[data.role - 1],
+            'email': data.email,
+            'login': data.login
+        }
+        return render_template('profile.html', user_info=user_info, **base_config())
 
 
 def abort_if_solution_not_found(solution_id):
