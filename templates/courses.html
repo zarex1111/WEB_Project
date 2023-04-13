@@ -7,13 +7,11 @@
                 <th scope="col">Только для авторизованных пользователей</th>
             </tr>
             {% for course in courses %}
-            <a href="/course/{{ course.id }}">
                 <tr>
-                    <th scope="col">{{ course.id }}</th>
+                    <th scope="col"><a href="/course/{{ course.id }}" class="btn btn-primary">{{ course.id }}</a></th>
                     <td>{{ course.title }}</td>
                     <td>{{ course.is_login_required }}</td>
                 </tr>
-            </a>
             {% endfor %}
         </table>
 {% endblock %}

@@ -139,3 +139,14 @@ html
 {
     vertical-align: middle;
 }
+
+#code-input
+{
+    white-space: pre;
+}
+
+.code-block
+{
+    background-color: antiquewhite;
+    text-align: left;
+}

@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-        <code>{{ solution.code }}</code>
+        <div class="code-block"><code id="code-input">{{ solution.code }}</code></div>
         <p>Точность - {{ solution.accuracy }}</p>
+        {% if errors|length > 0 %}
+                <table class="table">
+                    <tr>
+                        <th scope="col">Номер теста</th>
+                        <th scope="col">Входные данные</th>
+                        <th scope="col">Ожидаемый выход</th>
+                        <th scope="col">Полученный выход</th>
+                    </tr>
+                    {% for err in errors %}
+                        <tr>
+                            <th scope="col">{{ err['test_number'] }}</th>
+                            <td>{{ err['input'] }}</td>
+                            <td>{{ err['expected_output'] }}</td>
+                            <td>{{ err['received_output'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+        {% endif %}
         <a href="/task/{{ solution.task_id }}" class="btn btn-primary">Вернуться к задаче</a>
 {% endblock %}

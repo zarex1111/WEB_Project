@@ -38,6 +38,7 @@
             {% for solution in solutions %}
             <tr>
                 <th scope="row">{{ solution.id }}</th>
+                <td>{{ solution.accuracy }}</td>
                 <td>
                     <a href="/solution/{{ solution.id }}" class="btn btn-primary">Перейти к решению</a>
                     <a href="delete/solution/{{ solution.id }}" class="btn btn-primary">Удалить</a>

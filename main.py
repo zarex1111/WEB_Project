@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, abort
+from flask import Flask, render_template, request, redirect, abort, jsonify
 from base_config import base_config
 import requests
 from data.db_session import global_init, create_session
@@ -12,11 +12,15 @@ import os
 import email_api
 from useful_tools import smart_split
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
+from flask_restful import reqparse, Api, Resource
+from test_system import start_processing
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['UPLOAD_EXTENSIONS'] = ['jpg', 'png']
+
+api = Api(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -263,7 +267,8 @@ def solution_page(id):
     sess = create_session()
     solution = sess.query(Solution).filter(Solution.id == id, Solution.user_id == current_user.id).first()
     if solution:
-        return render_template('solution.html', solution=solution)
+        request = start_processing(solution.code, list(map(lambda x: (x.idata, x.odata), sess.query(Test).filter(Test.task_id == solution.task_id).all())))
+        return render_template('solution.html', solution=solution, errors=request['errors'])
 
 
 @app.route('/courses')
@@ -356,11 +361,41 @@ def add_solution_page(task_id):
         solution.task_id = task_id
         solution.user_id = current_user.id
         solution.code = form.code.data
-        solution.accuracy = 100
+
+        tests = sess.query(Test).filter(Test.task_id == solution.task_id).all()
+        tests = list(map(lambda x: (x.idata, x.odata), tests))
+
+        result = start_processing(solution.code, tests)
+        print(result)
+        solution.accuracy = result['accuracy']
         sess.add(solution)
         sess.commit()
         return redirect('/task/' + str(task_id))
     return render_template('add_solution.html', title='Добавить решение', **base_config(), form=form)
+
+
+def abort_if_solution_not_found(solution_id):
+    sess = create_session()
+    solution = sess.query(Solution).get(solution_id)
+    if not solution:
+        abort(404)
+
+
+class SolutionsResource(Resource):
+
+    def get(self, solution_id):
+        abort_if_solution_not_found(solution_id)
+        sess = create_session()
+        solution = sess.query(Solution).get(solution_id)
+        return jsonify({'solutions': solution.to_dict(only=('task_id', 'code', 'accuracy'))})
+    
+
+class SolutionsListResource(Resource):
+
+    def get(self):
+        sess = create_session()
+        solutions = sess.query(Solution).all()
+        return jsonify({'solutions': [x.to_dict(only=('task_id', 'code', 'accuracy')) for x in solutions]})
 
 
 @app.errorhandler(404)
@@ -379,4 +414,6 @@ def err500(e):
 
 
 if __name__ == '__main__':
+    api.add_resource(SolutionsListResource, '/api/solutions')
+    api.add_resource(SolutionsResource, '/api/solutions/<int:solution_id>')
     main()

@@ -5,7 +5,7 @@
             {{ form.hidden_tag() }}
             <div class="input-group">
                 <p class="info-group-text">{{ form.code.label }}</p>
-                {{ form.code(class="form-control", type="text") }}
+                <div class="code-block">{{ form.code(class="form-control", id="code-input", type="text") }}</div>
                 {% for error in form.code.errors %}
                     <div class="alert alert-danger" role="alert">
                         {{ error }}
