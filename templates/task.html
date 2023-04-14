@@ -20,8 +20,8 @@
                 <td>{{ test.idata }}</td>
                 <td>{{ test.odata }}</td>
                 <td>
-                    <a href="/edit/test/{{ test.id }}" class="btn btn-primary">Редактировать</a>
-                    <a href="/delete/test/{{ test.id }}" class="btn btn-primary">Удалить</a>
+                    <a href="/edit/test/{{ test.id }}" class="btn btn-secondary">Редактировать</a>
+                    <a href="/delete/test/{{ test.id }}" class="btn btn-secondary">Удалить</a>
                 </td>
             </tr>
             {% endfor %}
@@ -40,8 +40,8 @@
                 <th scope="row">{{ solution.id }}</th>
                 <td>{{ solution.accuracy }}</td>
                 <td>
-                    <a href="/solution/{{ solution.id }}" class="btn btn-primary">Перейти к решению</a>
-                    <a href="delete/solution/{{ solution.id }}" class="btn btn-primary">Удалить</a>
+                    <a href="/solution/{{ solution.id }}" class="btn btn-secondary">Перейти к решению</a>
+                    <a href="delete/solution/{{ solution.id }}" class="btn btn-secondary">Удалить</a>
                 </td>
             </tr>
             {% endfor %}
@@ -52,14 +52,15 @@
             <a href="/add_solution/{{ task.id }}"><button class="btn btn-primary">Добавить решение</button></a>
         {% else %}
             <a href="/add_test/{{ task.id }}"><button class="btn btn-primary" id="diff-btn">Добавить тест</button></a><br>
-            <a class="btn btn-primary" href="/edit/task/{{ task.id }}">Изменить</a>
-            <a class="btn btn-primary" href="/delete/task/{{ task.id }}">Удалить</a><br>
+            <a class="btn btn-secondary" href="/edit/task/{{ task.id }}">Изменить</a>
+            <a class="btn btn-secondary" href="/delete/task/{{ task.id }}">Удалить</a><br>
         {% endif %}
+        <a href="/course/{{ task.course_id }}" class="btn btn-secondary">Вернуться к курсу</a><br>
         <p>{{ message }}</p>
         <div class="com-block">
             {% for com in comments %}
                 <div class="comment">
-                    <a href="/profile/{{ com.author_id }}" class="btn btn-primary">{{ com.pseudonim }}</a><br>
+                    <a href="/profile/{{ com.author_id }}" class="btn btn-secondary">{{ com.pseudonim }}</a><br>
                     <p>{{ com.text }}</p><br>
                 </div>
             {% endfor %}

@@ -13,13 +13,13 @@
             <p>Курсы</p>
             <ul class="list-group">
                 {% for course in user_info['courses'] %}
-                    <li><a href="/course/{{ course.id }}"><p>{{ course.title }}</p></a></li>
+                    <li><a href="/course/{{ course.id }}" class="btn btn-secondary"><p>{{ course.title }}</p></a></li>
                 {% endfor %}
             </ul>
             <p>Задачи</p>
             <ul class="list-group">
                 {% for task in user_info['tasks'] %}
-                    <li><a href="/task/{{ task.id }}"><p>{{ task.title }}</p></a></li>
+                    <li><a href="/task/{{ task.id }}" class="btn btn-secondary"><p>{{ task.title }}</p></a></li>
                 {% endfor %}
             </ul>
         </div>

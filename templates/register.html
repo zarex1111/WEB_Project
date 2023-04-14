@@ -2,8 +2,8 @@
 
 {% block content %}
         <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-        <p class="fs-2">Регистрация</h2>
         <form class="register_form" method="post" action="" enctype="multipart/form-data">
+            <p class="fs-2">Регистрация</p>
             {{ form.hidden_tag() }}
             <div class="input-group">
                 <p class="input-group-text">{{ form.name.label }}</p>
