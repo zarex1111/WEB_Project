@@ -1,13 +1,11 @@
 import requests
 import googletrans
+from pycatapi import Client
 
 
 def load_random_cat():
-    # json_response = requests.get("https://aws.random.cat/meow").json()
-    # cat_url = json_response["file"]
-
-    cat_url = "profile_pictures/basic.jpg"
-
+    c = Client()
+    cat_url = c.get_cat()
     return cat_url
 
 

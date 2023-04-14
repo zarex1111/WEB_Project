@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <p>{{ task.title }}</p><br>
+        <p class="fs-2">{{ task.title }}</p><br>
         <p>{{ task.condition }}</p>
         <table class="table" title="Тесты/Решения">
         {% if current_user.id == task.author_id %}
@@ -51,7 +51,7 @@
         {% if current_user.id != task.author_id %}
             <a href="/add_solution/{{ task.id }}"><button class="btn btn-primary">Добавить решение</button></a>
         {% else %}
-            <a href="/add_test/{{ task.id }}"><button class="btn btn-primary">Добавить тест</button></a><br>
+            <a href="/add_test/{{ task.id }}"><button class="btn btn-primary" id="diff-btn">Добавить тест</button></a><br>
             <a class="btn btn-primary" href="/edit/task/{{ task.id }}">Изменить</a>
             <a class="btn btn-primary" href="/delete/task/{{ task.id }}">Удалить</a><br>
         {% endif %}
