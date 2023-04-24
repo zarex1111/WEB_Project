@@ -86,6 +86,8 @@ footer
 .main_obj
 {
     margin: 3%;
+    width: 95%;
+    background-image: linear-gradient(#FF7D73, #7908AA);
 }
 
 b
@@ -150,12 +152,21 @@ html
 #code-input
 {
     white-space: pre;
+    width: 300%;
+    height: 500%;
+    margin: 10%
+}
+
+#solution-button
+{
+    margin-top: 50%;
 }
 
 .code-block
 {
     background-color: antiquewhite;
     text-align: left;
+    margin: 3%;
 }
 
 .com-block

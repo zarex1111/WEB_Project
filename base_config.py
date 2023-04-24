@@ -4,8 +4,9 @@ from pycatapi import Client
 
 
 def load_random_cat():
-    c = Client()
-    cat_url = c.get_cat()
+    # c = Client()
+    # cat_url = c.get_cat()
+    cat_url = 'profile_pictures/basic.png'
     return cat_url
 
 

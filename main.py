@@ -12,8 +12,9 @@ import os
 import email_api
 from useful_tools import smart_split
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
-from flask_restful import reqparse, Api, Resource
+from flask_restful import Api, Resource
 from test_system import start_processing
+
 
 
 app = Flask(__name__)
@@ -74,7 +75,7 @@ def register_page():
             if filetype not in ('jpg', 'png'):
                 return render_template("register.html", title="Регистрация", form=form,
                     message="Неверный тип файла", **base_config())
-            new_filename = ''.join(choices(list(ascii_lowercase), k=10)) + '.jpg'
+            new_filename = ''.join(choices(list(ascii_lowercase), k=10)) + '.png'
             print(new_filename)
             path = 'profile_pictures/' + new_filename
             file_data.save(path)
@@ -117,9 +118,17 @@ def profile_page():
 @app.route('/delete/<string:type>/<int:id>')
 @login_required
 def delete_smth(type, id):
+    sess = create_session()
+    if type == 'solution':
+        solution = sess.query(Solution).filter(Solution.id == id, Solution.use_id == current_user.id).first()
+        if solution:
+            sess.delete(solution)
+            sess.commit()
+            return redirect('/task/' + str(solution.task_id))
+        else:
+            abort(404)
     if not is_a_teacher():
         return redirect('/access_denied')
-    sess = create_session()
     if type == 'course':
         course = sess.query(Course).filter(Course.author_id == current_user.id, Course.id == id).first()
         if course:
@@ -146,14 +155,6 @@ def delete_smth(type, id):
                 return redirect('/task/' + str(task.id))
             else:
                 abort(404)
-        else:
-            abort(404)
-    elif type == 'solution':
-        solution = sess.query(Solution).filter(Solution.id == id, Solution.author_id == current_user.id).first()
-        if solution:
-            sess.delete(solution)
-            sess.commit()
-            return redirect('/task/' + str(solution.task_id))
         else:
             abort(404)
     else:

@@ -1,18 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <link rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
+    <link rel="icon" href="static/png/icon.jpg">
         <form action="" method="post">
             {{ form.hidden_tag() }}
             <div class="input-group">
                 <p class="info-group-text">{{ form.code.label }}</p>
-                <div class="code-block">{{ form.code(class="form-control", id="code-input", type="text") }}</div>
+                <p>{{ form.code(class="form-control", id="code-input", type="text") }}</p>
                 {% for error in form.code.errors %}
                     <div class="alert alert-danger" role="alert">
                         {{ error }}
                     </div>
                 {% endfor %}
             </div>
-            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            <p>{{ form.submit(type="submit", class="btn btn-primary", id="solution-button") }}</p>
             <div>{{ message }}</div>
         </form>
 {% endblock %}

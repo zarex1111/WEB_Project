@@ -35,7 +35,7 @@ def create_test_machine(tests):
         file.write('from test_system import pretty_input\n')
         for test in tests:
             file.write(f'''\n\ndef test_{ tests.index(test) }():
-    assert pretty_input("{ test[0] }") == "{ test[1] }"''')
+    assert pretty_input("""{ test[0] }""") == """{ test[1] }"""''')
 
 
 def start_processing(code, tests):
