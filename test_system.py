@@ -62,8 +62,6 @@ def start_processing(code, tests):
     return request
         
         
-
-
 if __name__ == '__main__':
     code = '''name = input()
 if 'n' in name:

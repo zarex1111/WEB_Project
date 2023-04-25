@@ -120,7 +120,7 @@ def profile_page():
 def delete_smth(type, id):
     sess = create_session()
     if type == 'solution':
-        solution = sess.query(Solution).filter(Solution.id == id, Solution.use_id == current_user.id).first()
+        solution = sess.query(Solution).filter(Solution.id == id, Solution.user_id == current_user.id).first()
         if solution:
             sess.delete(solution)
             sess.commit()
@@ -358,8 +358,9 @@ def add_test_page(task_id):
     if form.validate_on_submit():
         sess = create_session()
         test = Test()
-        test.idata = form.idata.data
-        test.odata = form.odata.data
+        test.idata = form.idata.data.replace('\r', '')
+        test.odata = form.odata.data.replace('\r', '')
+        print('\r' in test.idata)
         test.task_id = task_id
         sess.add(test)
         sess.commit()
